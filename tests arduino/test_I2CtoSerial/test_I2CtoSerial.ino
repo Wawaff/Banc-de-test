@@ -1,18 +1,17 @@
-#include "SPI.h"
+#include <Wire.h>
+
 
 const int chip_select_pin = 10;
 char incoming_char;
 uint8_t incoming_byte;
-
+// byte address = 8;
 
 void setup()
 // put your setup code here, to run once:
 {
   Serial.begin(9600);
+  Wire.begin();
   pinMode(13, OUTPUT);
-  pinMode(chip_select_pin, OUTPUT);
-  digitalWrite(chip_select_pin, HIGH);
-  SPI.begin();
   Serial.println("Le programme commence");
 }
 
@@ -29,19 +28,16 @@ void loop()
     Serial.print(" (");
     Serial.print(incoming_byte);
     Serial.println(")");
-
-   
-    digitalWrite(chip_select_pin, LOW);
     
-    incoming_byte = SPI.transfer(incoming_byte);
-    incoming_char = incoming_byte;
+    Wire.beginTransmission(8);
+    Wire.write(incoming_char);
+    Wire.write(incoming_byte);
+    Wire.endTransmission();
+    Serial.println(Wire.endTransmission());
     
-    Serial.print("Caractere recu par SPI: ");
+    Serial.print("J'envoie le caractere ");
     Serial.print(incoming_char);
-    Serial.print(" (");
-    Serial.print(incoming_byte);
-    Serial.println(")");
-    
-    digitalWrite(chip_select_pin, HIGH);
+    Serial.print(" a l'adresse ");
+    Serial.println(8);
   }
 }
